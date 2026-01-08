@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import Snowfall from "react-snowfall";
 import About from "./About";
+import ProjectCard from "./ProjectCard";
+import Project from "./Project";
 
 function Home() {
-  const text = "Hi, I'm Rajan";
+  const text = "Hi, I'm Milan , A passionate Web Developer focused on building modern, interactive, and user-friendly web applications.";
   const [displayedText, setDisplayedText] = useState("");
-  const speed = 120;
+  const speed = 160;
   const delay = 1500;
 
   useEffect(() => {
@@ -38,9 +40,9 @@ function Home() {
   }, []);
 
   return (
-    <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="relative bg-[#020617]">
 
-      {/* GLOBAL SNOWFALL */}
+      {/*  SNOWFALL */}
       <Snowfall
         snowflakeCount={120}
         color="rgba(255,255,255,0.6)"
@@ -55,18 +57,25 @@ function Home() {
 
       {/* HERO */}
       <section className="min-h-screen flex flex-col items-center justify-center text-center relative z-20">
-        <h1 className="text-5xl md:text-7xl font-extrabold text-white">
-          {displayedText}
-        </h1>
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white">
+            {displayedText}
+          </h1>
 
-        <p className="text-xl md:text-2xl text-white mt-4">
-          I am building a portfolio.
-        </p>
+          <p className="mt-4 text-xl md:text-2xl text-white">
+            I am building a portfolio.
+          </p>
+        </div>
       </section>
 
       {/* ABOUT */}
       <section className="py-32 px-6 relative z-20">
         <About />
+      </section>
+
+      {/* Project */}
+      <section className="py-32 px-6 relative z-20">
+        <Project />
       </section>
 
     </div>
