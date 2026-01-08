@@ -1,20 +1,55 @@
-import React from 'react'
-import { Link } from 'react-router'
+import React from "react";
 
 function Header() {
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    section?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <header className=" bg-black text-white p-5 sticky top-0 z-50 shadow-md">
+    <header className="bg-black/70 backdrop-blur-md text-white p-5 sticky top-0 z-50 shadow-md">
       <nav className="flex justify-between items-center max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold text-cyan-400">Portfolio</h1>
-        <div className="space-x-4">
-          <Link to="/" className="hover:text-cyan-300 transition">Home</Link>
-          <Link to="/about" className="hover:text-cyan-300 transition">About</Link>
-          <Link to="/projects" className="hover:text-cyan-300 transition">Projects</Link>
-          <Link to="/contact" className="hover:text-cyan-300 transition">Contact</Link>
+
+        <h1
+          className="text-2xl font-bold text-cyan-400 cursor-pointer"
+          onClick={() => scrollToSection("home")}
+        >
+          Portfolio
+        </h1>
+
+        <div className="space-x-6">
+          <button
+            onClick={() => scrollToSection("home")}
+            className="hover:text-cyan-300 transition"
+          >
+            Home
+          </button>
+
+          <button
+            onClick={() => scrollToSection("about")}
+            className="hover:text-cyan-300 transition"
+          >
+            About
+          </button>
+
+          <button
+            onClick={() => scrollToSection("projects")}
+            className="hover:text-cyan-300 transition"
+          >
+            Projects
+          </button>
+
+          <button
+            onClick={() => scrollToSection("contact")}
+            className="hover:text-cyan-300 transition"
+          >
+            Contact
+          </button>
         </div>
+
       </nav>
     </header>
-  )
+  );
 }
 
-export default Header
+export default Header;

@@ -3,6 +3,7 @@ import Snowfall from "react-snowfall";
 import About from "./About";
 import ProjectCard from "./ProjectCard";
 import Project from "./Project";
+import Contact from "./Contact";
 
 function Home() {
   const text = "Hi, I'm Milan , A passionate Web Developer focused on building modern, interactive, and user-friendly web applications.";
@@ -56,7 +57,9 @@ function Home() {
       />
 
       {/* HERO */}
-      <section className="min-h-screen flex flex-col items-center justify-center text-center relative z-20">
+      <section
+        id="home"
+        className="min-h-screen flex flex-col items-center justify-center text-center relative z-20">
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-5xl md:text-7xl font-extrabold text-white">
             {displayedText}
@@ -69,15 +72,25 @@ function Home() {
       </section>
 
       {/* ABOUT */}
-      <section className="py-32 px-6 relative z-20">
+      <section
+        id="about"
+        className="py-32 px-6 relative z-20">
         <About />
       </section>
 
       {/* Project */}
-      <section className="py-32 px-6 relative z-20">
+      <section
+        id="projects"
+        className="py-32 px-6 relative z-20">
         <Project />
       </section>
 
+      {/* Contact */}
+      <section
+        id="contact"
+        className="py-32 px-6 relative z-20">
+        <Contact />
+      </section>
     </div>
   );
 }
