@@ -7,7 +7,7 @@ function Header() {
   };
 
   return (
-    <header className="bg-black/70 backdrop-blur-md text-white p-5 sticky top-0 z-50 shadow-md">
+    <header className="bg-black backdrop-blur-md text-white p-5 sticky top-0 z-50 shadow-md">
       <nav className="flex justify-between items-center max-w-6xl mx-auto">
 
         <h1
