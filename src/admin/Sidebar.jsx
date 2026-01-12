@@ -8,6 +8,8 @@ const Sidebar = () => {
             <nav className="space-y-4">
                 <Link to="/admin/dashboard" className="block hover:text-gray-300">Dashboard</Link>
                 <Link to="/admin/heroes" className="block hover:text-gray-300">Heroes</Link>
+                <Link to="/admin/about" className="block hover:text-gray-300">About</Link>
+
             </nav>
         </div>
     );

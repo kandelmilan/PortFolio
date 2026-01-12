@@ -12,6 +12,7 @@ function Home() {
   const delay = 1500;
 
   useEffect(() => {
+
     let index = 0;
     let intervalId;
     let timeoutId;
@@ -66,7 +67,7 @@ function Home() {
           </h1>
 
           <p className="mt-4 text-xl md:text-2xl text-white">
-            I am building a portfolio.
+            I am building....
           </p>
         </div>
       </section>

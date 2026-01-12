@@ -9,12 +9,12 @@ import AdminRoute from "./routes/AdminRoute";
 import Dashboard from "./admin/Dashboard";
 import AdminHero from "./admin/AdminHero";
 import AdminLayout from "./admin/AdminLayout";
-
-
+import AdminAbout from "./admin/AdminAbout";
 
 function App() {
   return (
     <Routes>
+      {/* Public Layout */}
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -22,8 +22,10 @@ function App() {
         <Route path="/contact" element={<Contact />} />
       </Route>
 
-      <Route path="/admin/login" element={<Login />} />
-      {/* Admin Layout */}
+      {/* Admin Login */}
+      <Route path="/login" element={<Login />} />
+
+      {/* Admin Protected Layout */}
       <Route
         path="/admin"
         element={
@@ -31,12 +33,14 @@ function App() {
             <AdminLayout />
           </AdminRoute>
         }
-      />
-      <Route path="dashboard" element={<Dashboard />} />
-      <Route path="heroes" element={<AdminHero />} />
+      >
 
+        <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="heroes" element={<AdminHero />} />
+        <Route path="about" element={<AdminAbout />} />
+      </Route>
     </Routes>
-
   );
 }
 
