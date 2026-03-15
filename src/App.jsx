@@ -10,6 +10,7 @@ import Dashboard from "./admin/Dashboard";
 import AdminHero from "./admin/AdminHero";
 import AdminLayout from "./admin/AdminLayout";
 import AdminAbout from "./admin/AdminAbout";
+import AdminProject from "./admin/AdminProject";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="heroes" element={<AdminHero />} />
         <Route path="about" element={<AdminAbout />} />
+        <Route path="project" element={<AdminProject />} />
       </Route>
     </Routes>
   );
