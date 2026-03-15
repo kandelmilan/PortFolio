@@ -30,6 +30,12 @@ function AdminSidebar() {
         >
           About Section
         </Link>
+        <Link
+          to="/admin/project"
+          className="hover:bg-gray-800 p-3 rounded"
+        >
+          Project Section
+        </Link>
 
       </nav>
 

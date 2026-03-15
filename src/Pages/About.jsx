@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import * as FaIcons from "react-icons/fa";
+import axios from "axios";
 
 function About() {
-  const [about, setAbout] = useState({
-    description: "",
-    skills: [],
-  });
-
+  const [about, setAbout] = useState({ description: "", skills: [] });
 
   useEffect(() => {
     const fetchAbout = async () => {
-      const res = await fetch("http://localhost:8000/about");
-      const data = await res.json();
-      setAbout(data);
+      try {
+        const res = await axios.get("http://localhost:8000/api/about");
+        setAbout(res.data);
+      } catch (err) {
+        console.error("Error fetching About:", err);
+      }
     };
     fetchAbout();
   }, []);
@@ -24,11 +24,10 @@ function About() {
       <h2 className="text-3xl md:text-5xl font-semibold text-center mb-10">
         About Me
       </h2>
-
       <p className="text-center text-slate-400 text-lg max-w-3xl mx-auto mb-16">
         {about.description}
+        this is the about section
       </p>
-
       <div className="flex flex-wrap justify-center gap-6">
         {about.skills?.map((skill, index) => {
           const Icon = FaIcons[skill.icon] || FaIcons.FaCode;
