@@ -1,20 +1,20 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "../admin/Sidebar";
+import AdminSidebar from "./AdminSidebar";
 
-const AdminLayout = () => {
+function AdminLayout() {
     return (
-        <div className="flex ">
-            {/* Sidebar */}
-            <div className="fixed left-0 top-0 h-screen w-64">
-                <Sidebar />
-            </div>
+        <div className="flex min-h-screen bg-gray-100">
 
-            {/* Page Content */}
-            <div className="ml-64 w-full p-6">
+            {/* Sidebar */}
+            <AdminSidebar />
+
+            {/* Main Content */}
+            <div className="flex-1 p-8">
                 <Outlet />
             </div>
+
         </div>
     );
-};
+}
 
 export default AdminLayout;

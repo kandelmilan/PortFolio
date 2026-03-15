@@ -1,88 +1,53 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 
-const AdminAbout = () => {
+function AdminAbout() {
+
   const [description, setDescription] = useState("");
-  const [skills, setSkills] = useState([
-    { name: "", icon: "" },
-  ]);
-
-  useEffect(() => {
-    const fetchAbout = async () => {
-      const res = await axios.get("http://localhost:8000/api/about");
-      if (res.data) {
-        setDescription(res.data.description);
-        setSkills(res.data.skills);
-      }
-    };
-    fetchAbout();
-  }, []);
-
-  const handleSkillChange = (index, field, value) => {
-    const updated = [...skills];
-    updated[index][field] = value;
-    setSkills(updated);
-  };
-
-  const addSkill = () => {
-    setSkills([...skills, { name: "", icon: "" }]);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:8000/api/about", {
-      description,
-      skills,
+
+    await fetch("http://localhost:8000/about", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ description }),
     });
-    alert("About section updated");
-  };
+
+    alert("About updated");
+  };4
 
   return (
-    <div className="bg-white p-6 rounded-xl max-w-2xl">
-      <h2 className="text-xl font-bold mb-4">Edit About Section</h2>
+    <div>
 
-      <textarea
-        className="w-full border p-3 mb-4"
-        placeholder="About description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      <h1 className="text-3xl font-bold mb-6">
+        Edit About Section
+      </h1>
 
-      <h3 className="font-semibold mb-2">Skills</h3>
-
-      {skills.map((skill, index) => (
-        <div key={index} className="flex gap-2 mb-2">
-          <input
-            placeholder="Skill name"
-            value={skill.name}
-            onChange={(e) =>
-              handleSkillChange(index, "name", e.target.value)
-            }
-            className="border p-2 flex-1"
-          />
-          <input
-            placeholder="Icon (FaReact)"
-            value={skill.icon}
-            onChange={(e) =>
-              handleSkillChange(index, "icon", e.target.value)
-            }
-            className="border p-2 flex-1"
-          />
-        </div>
-      ))}
-
-      <button onClick={addSkill} className="text-sm text-blue-600 mb-4">
-        + Add Skill
-      </button>
-
-      <button
-        onClick={handleSubmit}
-        className="bg-black text-white px-4 py-2 rounded"
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-xl flex flex-col gap-4"
       >
-        Save
-      </button>
+
+        <textarea
+          className="p-3 border rounded"
+          rows="6"
+          placeholder="About description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <button
+          className="bg-black text-white py-3 rounded"
+        >
+          Save
+        </button>
+
+      </form>
+
     </div>
   );
-};
+}
 
 export default AdminAbout;

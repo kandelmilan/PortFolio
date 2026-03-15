@@ -1,63 +1,60 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 
-const AdminHero = () => {
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+function AdminHero() {
 
-    // Load existing hero
-    useEffect(() => {
-        const fetchHero = async () => {
-            const res = await axios.get("http://localhost:8000/hero");
-            if (res.data) {
-                setTitle(res.data.title);
-                setDescription(res.data.description);
-            }
-        };
-        fetchHero();
-    }, []);
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        await axios.post("http://localhost:8000/hero", {
-            title,
-            description,
-        });
+    await fetch("http://localhost:8000/hero", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, subtitle }),
+    });
 
-        alert("Hero section updated!");
-    };
+    alert("Hero updated");
+  };
 
-    return (
-        <div className="max-w-2xl bg-white p-6 rounded-xl shadow">
-            <h2 className="text-2xl font-bold mb-4">Edit Hero Section</h2>
+  return (
+    <div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                    type="text"
-                    placeholder="Hero Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full border p-3 rounded"
-                />
+      <h1 className="text-3xl font-bold mb-6">
+        Edit Hero Section
+      </h1>
 
-                <input
-                    type="text"
-                    placeholder="Hero Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="w-full border p-3 rounded h-32"
-                />
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-xl flex flex-col gap-4"
+      >
 
-                <button
-                    type="submit"
-                    className="bg-black text-white px-6 py-2 rounded"
-                >
-                    Save
-                </button>
-            </form>
-        </div>
-    );
-};
+        <input
+          className="p-3 border rounded"
+          placeholder="Hero Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+
+        <textarea
+          className="p-3 border rounded"
+          placeholder="Subtitle"
+          value={subtitle}
+          onChange={(e) => setSubtitle(e.target.value)}
+        />
+
+        <button
+          className="bg-black text-white py-3 rounded"
+        >
+          Save
+        </button>
+
+      </form>
+
+    </div>
+  );
+}
 
 export default AdminHero;
