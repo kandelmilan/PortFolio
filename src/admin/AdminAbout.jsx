@@ -1,32 +1,37 @@
 import { useState, useEffect } from "react";
+import { FaEye, FaTrash } from "react-icons/fa";
 import axios from "axios";
 
 function AdminAbout() {
   const [description, setDescription] = useState("");
   const [skills, setSkills] = useState([{ name: "", icon: "" }]);
   const [loading, setLoading] = useState(false);
+  const [savedSkills, setSavedSkills] = useState([]);
+  const [selectedSkill, setSelectedSkill] = useState(null);
+
+  // Fetch About
+  const fetchAbout = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/about", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      const data = res.data;
+      setDescription(data.description || "");
+      setSkills(data.skills?.length ? data.skills : [{ name: "", icon: "" }]);
+      setSavedSkills(data.skills || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    const fetchAbout = async () => {
-      try {
-        const res = await axios.get("http://localhost:8000/about", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        setDescription(res.data.description || "");
-        setSkills(res.data.skills || [{ name: "", icon: "" }]);
-      } catch (err) {
-        console.error("Error fetching About:", err.response?.data || err.message);
-      }
-    };
     fetchAbout();
   }, []);
 
   const handleSkillChange = (index, field, value) => {
-    const updatedSkills = [...skills];
-    updatedSkills[index][field] = value;
-    setSkills(updatedSkills);
+    const updated = [...skills];
+    updated[index][field] = value;
+    setSkills(updated);
   };
 
   const addSkill = () => setSkills([...skills, { name: "", icon: "" }]);
@@ -35,115 +40,141 @@ function AdminAbout() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    const validSkills = skills.filter(s => s.name?.trim() && s.icon?.trim());
+    if (!description.trim()) {
+      alert("Description cannot be empty");
+      setLoading(false);
+      return;
+    }
+
     try {
-      await axios.post(
-        "http://localhost:8000/api/about",
-        { description, skills },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      const res = await axios.post(
+        "http://localhost:8000/about",
+        { description, skills: validSkills },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-      alert("About updated successfully!");
+
+      alert("Saved successfully!");
+      setSavedSkills(res.data.skills || validSkills);
+
+      // Reset form
+      setDescription("");
+      setSkills([{ name: "", icon: "" }]);
     } catch (err) {
-      console.error("Error updating About:", err.response?.data || err.message);
-      alert("Error updating About. Check console.");
+      console.error(err);
+      alert("Failed to save About");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDeleteSkill = async (skillName) => {
+    if (!window.confirm("Delete this skill?")) return;
+    try {
+      const res = await axios.delete(`http://localhost:8000/about/skill/${skillName}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setSavedSkills(res.data.skills);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete skill");
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto p-6 bg-gray-100 rounded-xl shadow-md my-6">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Edit About</h2>
+      <h2 className="text-3xl font-bold mb-6">Edit About</h2>
 
-      {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 p-6 bg-white rounded shadow-sm mb-8"
-      >
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow flex flex-col gap-4 mb-8">
         <textarea
-          className="p-3 rounded border border-gray-300 focus:ring-2 focus:ring-gray-400"
+          className="p-3 border rounded"
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          required
         />
 
-        <h3 className="text-gray-800 font-semibold">Skills</h3>
-        {skills.map((skill, index) => (
-          <div key={index} className="flex gap-2 items-center">
+        <h3 className="font-semibold">Skills</h3>
+        {skills.map((skill, idx) => (
+          <div key={idx} className="flex gap-2 items-center">
             <input
               type="text"
               placeholder="Skill Name"
-              className="p-2 rounded border border-gray-300 flex-1 focus:ring-2 focus:ring-gray-400"
+              className="p-2 border rounded flex-1"
               value={skill.name}
-              onChange={(e) => handleSkillChange(index, "name", e.target.value)}
-              required
+              onChange={(e) => handleSkillChange(idx, "name", e.target.value)}
             />
             <input
               type="text"
               placeholder="Icon (e.g., FaReact)"
-              className="p-2 rounded border border-gray-300 flex-1 focus:ring-2 focus:ring-gray-400"
+              className="p-2 border rounded flex-1"
               value={skill.icon}
-              onChange={(e) => handleSkillChange(index, "icon", e.target.value)}
+              onChange={(e) => handleSkillChange(idx, "icon", e.target.value)}
             />
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition-all"
-              onClick={() => removeSkill(index)}
-            >
+            <button type="button" onClick={() => removeSkill(idx)} className="bg-gray-300 px-3 py-1 rounded">
               Remove
             </button>
           </div>
         ))}
 
-        <button
-          type="button"
-          className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 w-fit transition-all"
-          onClick={addSkill}
-        >
+        <button type="button" onClick={addSkill} className="bg-gray-800 text-white px-4 py-2 rounded w-fit">
           Add Skill
         </button>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-6 py-3 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 transition-all"
-        >
-          {loading ? "Saving..." : "Save About"}
+        <button type="submit" className="bg-gray-800 text-white py-2 rounded">
+          {loading ? "Saving..." : "Save"}
         </button>
       </form>
 
-      {/* Skills Table */}
-      <h3 className="text-2xl font-bold text-gray-800 mb-4">Current Skills</h3>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-300 bg-white rounded-lg">
-          <thead className="bg-gray-200 text-gray-800">
+      <h3 className="text-2xl font-bold mb-4">Skills Preview</h3>
+      <table className="w-full bg-white rounded shadow">
+        <thead className="bg-gray-200">
+          <tr>
+            <th className="p-3 text-left">Skill</th>
+            <th className="p-3 text-left">Icon</th>
+            <th className="p-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {savedSkills.length === 0 ? (
             <tr>
-              <th className="p-3 text-left border-b border-gray-300">Skill Name</th>
-              <th className="p-3 text-left border-b border-gray-300">Icon</th>
+              <td colSpan="3" className="p-3 text-center text-gray-500">No skills added yet.</td>
             </tr>
-          </thead>
-          <tbody>
-            {skills.length === 0 ? (
-              <tr>
-                <td colSpan="2" className="p-3 text-center text-gray-500">
-                  No skills added yet.
+          ) : (
+            savedSkills.map((skill, idx) => (
+              <tr key={idx} className="border-t">
+                <td className="p-3">{skill.name}</td>
+                <td className="p-3">{skill.icon}</td>
+                <td className="p-3 flex gap-2">
+                  <button
+                    onClick={() => setSelectedSkill(skill)}
+                    className="flex items-center gap-1 bg-blue-500 text-white px-3 py-1 rounded"
+                  >
+                    <FaEye /> View
+                  </button>
+                  <button
+                    onClick={() => handleDeleteSkill(skill.name)}
+                    className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded"
+                  >
+                    <FaTrash /> Delete
+                  </button>
                 </td>
               </tr>
-            ) : (
-              skills.map((skill, idx) => (
-                <tr key={idx} className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                  <td className="p-3 border-b border-gray-200">{skill.name}</td>
-                  <td className="p-3 border-b border-gray-200">{skill.icon}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
+
+      {selectedSkill && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded text-center w-80">
+            <h2 className="text-xl font-bold mb-2">{selectedSkill.name}</h2>
+            <p className="text-gray-600 mb-4">Icon: {selectedSkill.icon}</p>
+            <button onClick={() => setSelectedSkill(null)} className="bg-gray-800 text-white px-4 py-2 rounded">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

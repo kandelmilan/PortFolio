@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { FaEye, FaTrash } from "react-icons/fa";
 
 function AdminProject() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [status, setStatus] = useState("");
-    const [image, setImage] = useState(""); // For image URL
+    const [image, setImage] = useState("");
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Fetch projects on mount
+
+    const [selectedProject, setSelectedProject] = useState(null); // for modal
+
     useEffect(() => {
         fetchProjects();
     }, []);
@@ -21,129 +24,170 @@ function AdminProject() {
             });
             setProjects(res.data);
         } catch (err) {
-            console.error("Error fetching projects:", err.response?.data || err.message);
+            console.error(err);
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title || !description) return alert("Title and description are required!");
-        setLoading(true);
+        if (!title || !description) return alert("Required fields missing");
 
+        setLoading(true);
         try {
-            // Sending as JSON (if backend expects URL) 
-            await axios.post(
+            const res = await axios.post(
                 "http://localhost:8000/project",
                 { title, description, status, image },
                 { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
             );
 
-            alert("Project added successfully!");
+            setProjects([...projects, res.data]); // instant update
             setTitle("");
             setDescription("");
             setStatus("");
             setImage("");
-            fetchProjects(); // refresh table
         } catch (err) {
-            console.error("Error adding project:", err.response?.data || err.message);
-            alert("Error adding project. Check console for details.");
+            console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
-    return (
-        <div className="max-w-5xl mx-auto p-6 bg-gray-100 rounded-xl shadow-md my-6">
-            {/* Title */}
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">Add New Project</h2>
+    // DELETE (instant UI update)
+    const handleDelete = async (id) => {
+        const confirmDelete = window.confirm("Delete this project?");
+        if (!confirmDelete) return;
 
-            {/* Form */}
-            <form
-                onSubmit={handleSubmit}
-                className="flex flex-col gap-4 p-6 bg-white rounded shadow-sm"
-            >
+        try {
+            await axios.delete(`http://localhost:8000/project/${id}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+
+            // remove from UI instantly
+            setProjects(projects.filter((p) => p._id !== id));
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    return (
+        <div className="max-w-6xl mx-auto p-6 bg-gray-100 rounded-xl shadow-md my-6">
+            <h2 className="text-3xl font-bold mb-6">Add Project</h2>
+
+            {/* FORM */}
+            <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow flex flex-col gap-4">
                 <input
                     type="text"
-                    placeholder="Project Title"
-                    className="p-3 rounded border border-gray-300 focus:ring-2 focus:ring-gray-400"
+                    placeholder="Title"
+                    className="p-3 border rounded"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    required
                 />
                 <textarea
-                    placeholder="Project Description"
-                    className="p-3 rounded border border-gray-300 focus:ring-2 focus:ring-gray-400"
+                    placeholder="Description"
+                    className="p-3 border rounded"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    required
                 />
                 <input
                     type="text"
-                    placeholder="Status (Optional)"
-                    className="p-3 rounded border border-gray-300 focus:ring-2 focus:ring-gray-400"
+                    placeholder="Status"
+                    className="p-3 border rounded"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                 />
                 <input
                     type="text"
-                    placeholder="Image URL (Optional)"
-                    className="p-3 rounded border border-gray-300 focus:ring-2 focus:ring-gray-400"
+                    placeholder="Image URL"
+                    className="p-3 border rounded"
                     value={image}
                     onChange={(e) => setImage(e.target.value)}
                 />
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="py-3 bg-gray-800 text-white rounded font-bold hover:bg-gray-700 disabled:opacity-50"
-                >
-                    {loading ? "Adding..." : "Add Project"}
+
+                <button className="bg-gray-800 text-white py-2 rounded">
+                    {loading ? "Adding..." : "Add"}
                 </button>
             </form>
 
-            {/* Table */}
-            <h3 className="text-2xl font-bold text-gray-800 mt-10 mb-4">Added Projects</h3>
-            <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-300 bg-white rounded-lg">
-                    <thead className="bg-gray-200 text-gray-800">
-                        <tr>
-                            <th className="p-3 text-left border-b border-gray-300">Title</th>
-                            <th className="p-3 text-left border-b border-gray-300">Description</th>
-                            <th className="p-3 text-left border-b border-gray-300">Status</th>
-                            <th className="p-3 text-left border-b border-gray-300">Image</th>
+            {/* TABLE */}
+            <h3 className="text-2xl font-bold mt-10 mb-4">Projects</h3>
+
+            <table className="w-full bg-white rounded shadow">
+                <thead className="bg-gray-200">
+                    <tr>
+                        <th className="p-3 text-left">Title</th>
+                        <th className="p-3 text-left">Description</th>
+                        <th className="p-3 text-left">Status</th>
+                        <th className="p-3 text-left">Image</th>
+                        <th className="p-3 text-left">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {projects.map((proj) => (
+                        <tr key={proj._id} className="border-t">
+                            <td className="p-3">{proj.title}</td>
+                            <td className="p-3">{proj.description}</td>
+                            <td className="p-3">{proj.status || "N/A"}</td>
+
+                            <td className="p-3">
+                                {proj.image ? (
+                                    <img src={proj.image} className="w-16 h-16 rounded" />
+                                ) : "N/A"}
+                            </td>
+
+                            {/* ACTIONS */}
+                            <td className="p-3">
+                                <div className="flex items-center gap-3">
+
+                                    {/* VIEW */}
+                                    <button
+                                        onClick={() => setSelectedProject(proj)}
+                                        className="flex items-center gap-1 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                                    >
+                                        <FaEye /> View
+                                    </button>
+
+                                    {/* DELETE */}
+                                    <button
+                                        onClick={() => handleDelete(proj._id)}
+                                        className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                    >
+                                        <FaTrash /> Delete
+                                    </button>
+
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {projects.length === 0 && (
-                            <tr>
-                                <td colSpan="4" className="p-3 text-center text-gray-500">
-                                    No projects added yet.
-                                </td>
-                            </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {/* CENTER MODAL */}
+            {selectedProject && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg w-96 shadow-lg text-center">
+                        <h2 className="text-xl font-bold mb-3">{selectedProject.title}</h2>
+                        <p className="mb-2">{selectedProject.description}</p>
+                        <p className="text-gray-500 mb-4">
+                            Status: {selectedProject.status || "N/A"}
+                        </p>
+
+                        {selectedProject.image && (
+                            <img
+                                src={selectedProject.image}
+                                className="w-full h-40 object-cover rounded mb-4"
+                            />
                         )}
-                        {projects.map((proj, idx) => (
-                            <tr
-                                key={idx}
-                                className={idx % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                            >
-                                <td className="p-3 border-b border-gray-200">{proj.title}</td>
-                                <td className="p-3 border-b border-gray-200">{proj.description}</td>
-                                <td className="p-3 border-b border-gray-200">{proj.status}</td>
-                                <td className="p-3 border-b border-gray-200">
-                                    {proj.image ? (
-                                        <img
-                                            src={proj.image}
-                                            alt={proj.title}
-                                            className="w-20 h-20 object-cover rounded"
-                                        />
-                                    ) : (
-                                        "N/A"
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+
+                        <button
+                            onClick={() => setSelectedProject(null)}
+                            className="bg-gray-800 text-white px-4 py-2 rounded"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
