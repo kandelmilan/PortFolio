@@ -1,10 +1,24 @@
-import { Children } from "react";
-import { Navigate } from "react-router";
-
+import { Navigate } from "react-router-dom";
 
 const AdminRoute = ({ children }) => {
     const token = localStorage.getItem("token");
-    return token ? children : <Navigate to="/admin/login" />
+
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
+
+    try {
+        console.log("TOKEN:", token);
+        const payload = JSON.parse(atob(token.split(".")[1]));
+
+        if (payload.exp * 1000 < Date.now()) {
+            localStorage.removeItem("token");
+            return <Navigate to="/login" replace />;
+        }
+    } catch (err) {
+        return <Navigate to="/login" replace />;
+    }
+    return children;
 };
 
 export default AdminRoute;

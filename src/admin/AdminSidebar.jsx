@@ -21,21 +21,22 @@ function AdminSidebar() {
           to="/admin/heroes"
           className="hover:bg-gray-800 p-3 rounded"
         >
-          Hero Section
+          Hero
         </Link>
 
         <Link
           to="/admin/about"
           className="hover:bg-gray-800 p-3 rounded"
         >
-          About Section
+          About
         </Link>
         <Link
           to="/admin/project"
           className="hover:bg-gray-800 p-3 rounded"
         >
-          Project Section
+          Project
         </Link>
+
 
       </nav>
 

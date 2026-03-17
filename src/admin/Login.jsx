@@ -1,56 +1,98 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaLock, FaEnvelope } from "react-icons/fa";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) navigate("/admin/dashboard");
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setLoading(true);
+
         try {
-            const res = await axios.post("http://localhost:8000/admin/login", { email, password });
+            const res = await axios.post("http://localhost:8000/admin/login", {
+                email,
+                password,
+            });
+
             localStorage.setItem("token", res.data.token);
-            navigate("/admin");
+            navigate("/admin/dashboard");
+
         } catch (err) {
-            alert("Invalid credentials");
+            console.error(err.response?.data || err.message);
+            alert(err.response?.data?.message || "Login failed");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-500 via-pink-500 to-red-500">
+        <div className="min-h-screen flex items-center justify-center bg-[#020617] relative overflow-hidden">
+
+            {/* 🔥 Background Glow */}
+            <div className="absolute w-[500px] h-[500px] bg-purple-600 rounded-full blur-[120px] opacity-30 top-[-100px] left-[-100px]"></div>
+            <div className="absolute w-[400px] h-[400px] bg-pink-500 rounded-full blur-[120px] opacity-30 bottom-[-100px] right-[-100px]"></div>
+
+            {/* 🔥 Card */}
             <form
                 onSubmit={handleLogin}
-                className="w-96 bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl flex flex-col gap-6"
+                className="relative z-10 w-[380px] p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl flex flex-col gap-6"
             >
-                <h1 className="text-3xl font-extrabold text-gray-800 text-center">Admin Login</h1>
+                {/* Title */}
+                <h1 className="text-3xl font-extrabold text-white text-center tracking-wide">
+                    Admin Login
+                </h1>
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                <p className="text-gray-300 text-center text-sm">
+                    Welcome back! Please login to continue
+                </p>
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                {/* Email */}
+                <div className="flex items-center gap-3 bg-white/10 border border-white/20 rounded-lg px-4 py-3 focus-within:ring-2 focus-within:ring-purple-500">
+                    <FaEnvelope className="text-gray-300" />
+                    <input
+                        type="email"
+                        placeholder="Email address"
+                        className="bg-transparent outline-none text-white w-full placeholder-gray-400"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                </div>
 
+                {/* Password */}
+                <div className="flex items-center gap-3 bg-white/10 border border-white/20 rounded-lg px-4 py-3 focus-within:ring-2 focus-within:ring-purple-500">
+                    <FaLock className="text-gray-300" />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        className="bg-transparent outline-none text-white w-full placeholder-gray-400"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+
+                {/* Button */}
                 <button
                     type="submit"
-                    className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105"
+                    disabled={loading}
+                    className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                 >
-                    Login
+                    {loading ? "Logging in..." : "Login"}
                 </button>
 
-                <p className="text-center text-gray-500 text-sm">
-                    Forgot password? <span className="text-purple-600 hover:underline cursor-pointer">Reset</span>
+                {/* Footer */}
+                <p className="text-center text-gray-400 text-sm">
+                    Secure Admin Access 🔒
                 </p>
             </form>
         </div>
