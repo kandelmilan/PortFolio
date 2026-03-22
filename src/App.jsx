@@ -11,6 +11,7 @@ import AdminHero from "./admin/AdminHero";
 import AdminLayout from "./admin/AdminLayout";
 import AdminAbout from "./admin/AdminAbout";
 import AdminProject from "./admin/AdminProject";
+import AdminContacts from "./admin/AdminContact";
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
         <Route path="heroes" element={<AdminHero />} />
         <Route path="about" element={<AdminAbout />} />
         <Route path="project" element={<AdminProject />} />
+        <Route path="contact" element={<AdminContacts />} />
       </Route>
     </Routes>
   );

@@ -36,6 +36,12 @@ function AdminSidebar() {
         >
           Project
         </Link>
+        <Link
+          to="/admin/contact"
+          className="hover:bg-gray-800 p-3 rounded"
+        >
+          Contact
+        </Link>
 
 
       </nav>
