@@ -13,7 +13,7 @@ function AdminHero() {
 
   const fetchHero = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/hero");
+      const res = await axios.get("https://portfolio-backend-3bax.onrender.com/hero");
       setHeroData(res.data);
       setTitle(res.data?.title || "");
       setSubtitle(res.data?.subtitle || "");
@@ -26,7 +26,7 @@ function AdminHero() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:8000/hero", { title, subtitle });
+      const res = await axios.post("https://portfolio-backend-3bax.onrender.com/hero", { title, subtitle });
       alert("Hero updated successfully!");
       setHeroData(res.data);
     } catch (err) {

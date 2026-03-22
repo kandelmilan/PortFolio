@@ -15,7 +15,7 @@ function Home() {
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/hero");
+        const res = await axios.get("https://portfolio-backend-3bax.onrender.com/hero");
         setHero(res.data || { title: "Hi, I'm a Developer", subtitle: "Welcome to my portfolio" });
       } catch (err) {
         console.error("Error fetching hero:", err);

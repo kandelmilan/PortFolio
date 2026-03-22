@@ -8,7 +8,7 @@ function About() {
   useEffect(() => {
     const fetchAbout = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/about"); // single About
+        const res = await axios.get("https://portfolio-backend-3bax.onrender.com/about"); 
         setAbout(res.data);
       } catch (err) {
         console.error("Error fetching About:", err);

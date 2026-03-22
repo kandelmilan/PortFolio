@@ -69,7 +69,7 @@ function AdminContacts() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this contact?")) return;
     try {
-      await axios.delete(`http://localhost:8000/contact/${id}`, {
+      await axios.delete(`https://portfolio-backend-3bax.onrender.com/contact/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setContacts(contacts.filter((c) => c._id !== id));

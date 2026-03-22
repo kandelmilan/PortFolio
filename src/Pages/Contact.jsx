@@ -8,7 +8,7 @@ function Contact() {
     // Fetch contacts from backend
     const fetchContacts = async () => {
       try {
-        const res = await fetch("http://localhost:8000/contact");
+        const res = await fetch("https://portfolio-backend-3bax.onrender.com/contact");
         const data = await res.json();
         setContacts(data);
       } catch (err) {

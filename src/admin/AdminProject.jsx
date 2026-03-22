@@ -19,7 +19,7 @@ function AdminProject() {
 
     const fetchProjects = async () => {
         try {
-            const res = await axios.get("http://localhost:8000/project", {
+            const res = await axios.get("https://portfolio-backend-3bax.onrender.com//project", {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
             setProjects(res.data);
@@ -35,7 +35,7 @@ function AdminProject() {
         setLoading(true);
         try {
             const res = await axios.post(
-                "http://localhost:8000/project",
+                "https://portfolio-backend-3bax.onrender.com//project",
                 { title, description, status, image },
                 { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
             );
@@ -58,7 +58,7 @@ function AdminProject() {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`http://localhost:8000/project/${id}`, {
+            await axios.delete(`https://portfolio-backend-3bax.onrender.com//project/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
 

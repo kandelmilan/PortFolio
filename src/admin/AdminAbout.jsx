@@ -14,7 +14,7 @@ function AdminAbout() {
   // ✅ Fetch About Data
   const fetchAbout = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/about", {
+      const res = await axios.get("https://portfolio-backend-3bax.onrender.com/about", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -65,7 +65,7 @@ function AdminAbout() {
 
     try {
       await axios.post(
-        "http://localhost:8000/about",
+        "https://portfolio-backend.onrender.com/about",
         { description, skills: validSkills },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -94,13 +94,13 @@ function AdminAbout() {
 
     try {
       const res = await axios.delete(
-        `http://localhost:8000/about/skill/${skillName}`,
+        `https://portfolio-backend.onrender.com/about/skill/${skillName}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      // ✅ Update table instantly
+
       setSavedSkills(res.data.skills);
 
     } catch (err) {

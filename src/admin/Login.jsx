@@ -20,7 +20,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post("http://localhost:8000/admin/login", {
+            const res = await axios.post("https://portfolio-backend-3bax.onrender.com/admin/login", {
                 email,
                 password,
             });
