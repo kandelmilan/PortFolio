@@ -1,9 +1,10 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaHome } from "react-icons/fa";
 
 function AdminLayout() {
     const location = useLocation();
+    const navigate = useNavigate();
 
     // Derive a page title from the path
     const pageTitle = location.pathname
@@ -24,9 +25,21 @@ function AdminLayout() {
                 {/* Header */}
                 <header className="flex justify-between items-center bg-white shadow p-4 sm:p-6">
                     <h1 className="text-xl font-bold text-gray-800">{pageTitle}</h1>
-                    <div className="flex items-center gap-3">
-                        <FaUserCircle className="text-3xl text-gray-600" />
-                        <span className="hidden sm:inline text-gray-700">Admin</span>
+
+                    <div className="flex items-center gap-4">
+                        {/* Back to Home Button */}
+                        <button
+                            onClick={() => navigate("/")}
+                            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
+                        >
+                            <FaHome /> Home
+                        </button>
+
+                        {/* Admin/User Info */}
+                        <div className="flex items-center gap-2">
+                            <FaUserCircle className="text-3xl text-gray-600" />
+                            <span className="hidden sm:inline text-gray-700">Admin</span>
+                        </div>
                     </div>
                 </header>
 
