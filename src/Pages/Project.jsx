@@ -22,7 +22,7 @@ function Project() {
 
     return (
         <section className="min-h-screen px-6 py-16">
-            <Snowfall />
+            {/* <Snowfall /> */}
             <h1 className="text-4xl font-bold text-white text-center mb-12">
                 My Projects
             </h1>
